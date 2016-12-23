@@ -1,0 +1,43 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="**\*.cs" />
+    <EmbeddedResource Include="**\*.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.App">
+      <Version>1.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SVIBEL.Core.AuthenticationClient\SVIBEL.Core.AuthenticationClient.csproj">
+      <Project>{C98BB250-3746-497D-9EA4-DCCEB029BFBD}</Project>
+      <Name>SVIBEL.Core.AuthenticationClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Common\SVIBEL.Core.Common.csproj">
+      <Project>{00D7DB03-3F7F-41F7-95C9-FD6589E8F110}</Project>
+      <Name>SVIBEL.Core.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Messaging\SVIBEL.Core.Messaging.csproj">
+      <Project>{B7EE590D-C37C-4F00-A18A-9DC9EA2702D8}</Project>
+      <Name>SVIBEL.Core.Messaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj">
+      <Project>{1140A6AB-62BD-41E3-AF7A-50208EA18614}</Project>
+      <Name>SVIBEL.Core.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Config\SVIBEL.Core.Config.csproj">
+      <Project>{9A04765D-487F-439B-9697-DEADC3809206}</Project>
+      <Name>SVIBEL.Core.Config</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
