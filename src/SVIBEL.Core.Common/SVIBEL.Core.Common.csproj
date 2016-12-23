@@ -1,0 +1,51 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Sdk">
+      <Version>1.0.0-alpha-20161104-2</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NETStandard.Library">
+      <Version>1.6.1</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj">
+      <Project>{1140A6AB-62BD-41E3-AF7A-50208EA18614}</Project>
+      <Name>SVIBEL.Core.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Messaging\IMessageBroker.cs" />
+    <Compile Include="Components\IBuildableComponent.cs" />
+    <Compile Include="Components\IStartableComponent.cs" />
+    <Compile Include="Config\IConfiguration.cs" />
+    <Compile Include="Components\BuildParams.cs" />
+    <Compile Include="Service\IService.cs" />
+    <Compile Include="Service\ServiceLocator.cs" />
+    <Compile Include="Bootstrapper\BootstrapperBase.cs" />
+    <Compile Include="Messaging\MessagingConstants.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\ConsoleLogger.cs" />
+    <Compile Include="Service\SelfStartingServiceContainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Components\" />
+    <Folder Include="Messaging\" />
+    <Folder Include="Service\" />
+    <Folder Include="Bootstrapper\" />
+    <Folder Include="Logging\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

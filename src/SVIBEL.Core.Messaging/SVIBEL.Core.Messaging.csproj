@@ -1,0 +1,48 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Sdk">
+      <Version>1.0.0-alpha-20161104-2</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NETStandard.Library">
+      <Version>1.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="EasyNetQ">
+      <Version>2.0.4-netcore1432</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="RabbitMQMessageBroker.cs" />
+    <Compile Include="MessageBrokerFactory.cs" />
+    <Compile Include="RabbitLogger.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SVIBEL.Core.AuthenticationClient\SVIBEL.Core.AuthenticationClient.csproj">
+      <Project>{C98BB250-3746-497D-9EA4-DCCEB029BFBD}</Project>
+      <Name>SVIBEL.Core.AuthenticationClient</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Common\SVIBEL.Core.Common.csproj">
+      <Project>{00D7DB03-3F7F-41F7-95C9-FD6589E8F110}</Project>
+      <Name>SVIBEL.Core.Common</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj">
+      <Project>{1140A6AB-62BD-41E3-AF7A-50208EA18614}</Project>
+      <Name>SVIBEL.Core.Models</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
