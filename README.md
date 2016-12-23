@@ -9,22 +9,22 @@ Download and reference
 TODO:Nuget
 
 ## Libraries
-#SVIBEL.Core.AuthenticationClient
+###SVIBEL.Core.AuthenticationClient
 Authentication client. Currently there is an implementation for Auth0.
 
-#SVIBEL.Core.Common
+###SVIBEL.Core.Common
 Common components.
 
-#SVIBEL.Core.Config
+###SVIBEL.Core.Config
 Base components used by config any config component.
 
-#SVIBEL.Core.ConsoleHarness
+###SVIBEL.Core.ConsoleHarness
 Used for testing.
 
-#SVIBEL.Core.Messaging
+###SVIBEL.Core.Messaging
 AMQP abstraction. Currently there is an implementations for RabbitMQ
 
-#SVIBEL.Core.Models
+###SVIBEL.Core.Models
 Basic models used by the framework
 
 ## Contributing
