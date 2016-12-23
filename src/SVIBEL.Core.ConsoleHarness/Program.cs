@@ -114,7 +114,7 @@ class Program
 			User = "admin",
 			Password = "admin",
 			Port = 5672,
-			Host = "192.168.233.139",
+			Host = "localhost",
 			ExchangeName = "Thor_Exchange",
 			UnauthorizedRequestTopic = MessagingConstants.UnauthorizedRequestTopic
 		};
