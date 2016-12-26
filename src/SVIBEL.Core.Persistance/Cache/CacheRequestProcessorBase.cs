@@ -35,5 +35,10 @@ namespace SVIBEL.Core.Persistance
 		{
 			_cahceProcessors.ForEach(x => x.Stop());
 		}
+
+		protected override void OnConfigChanged()
+		{
+			UpdateConfigForCacheProcessors();
+		}
 	}
 }

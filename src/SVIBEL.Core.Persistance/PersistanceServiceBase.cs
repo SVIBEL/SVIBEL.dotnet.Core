@@ -1,20 +1,19 @@
 ﻿using System;
 using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Components;
+using SVIBEL.Core.Common.Service;
 using SVIBEL.Core.Models;
 using SVIBEL.Core.Models.Messaging;
 
 namespace SVIBEL.Core.Persistance
 {
-	public abstract class PersistanceServiceBase : IStartableComponent
+	public abstract class PersistanceServiceBase : IService
 	{
+		private PersistanceRequestProcessorBase _messagePeristor;
+		private CacheRequestProcessorBase _cacheProcessing; 
+
 		public event EventHandler Started;
         public IDataContext Provider { get; private set; }
-
-        public IConfiguration<IConfig> ServerConfig
-        {
-            get; set;
-        }
 
 		public bool IsStarted
 		{
@@ -30,9 +29,13 @@ namespace SVIBEL.Core.Persistance
 
         public virtual void Start(object args)
         {
-			if (ServerConfig != null && Provider != null)
+			if (Provider != null)
 			{
 				IsStarted = true;
+
+				_messagePeristor.Start(null);
+				_cacheProcessing.Start(null);
+
 				RaiseStarted();
 			}
         }
@@ -46,5 +49,16 @@ namespace SVIBEL.Core.Persistance
         {
 			IsStarted = false;
         }
+
+		public void Build(BuildParams buildParams)
+		{
+			BuildConfig();
+			BuildMessagePersistor();
+			BuildCacheProcessor();
+		}
+
+		protected abstract void BuildConfig();
+		protected abstract void BuildMessagePersistor();
+		protected abstract void BuildCacheProcessor();
 	}
 }

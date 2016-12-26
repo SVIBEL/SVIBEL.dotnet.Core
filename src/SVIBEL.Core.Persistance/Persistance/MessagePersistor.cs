@@ -40,5 +40,10 @@ namespace SVIBEL.Core.Persistance
 		{
 			Provider.Insert(msg.MessageContent);
 		}
+
+		public override void SetConfigService()
+		{
+			// no need to set config service, these classes don't require config
+		}
 	}
 }

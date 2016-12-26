@@ -55,6 +55,7 @@
     <Compile Include="Persistance\CRUDMessagPersistor.cs" />
     <Compile Include="Mongo\MongoContext.cs" />
     <Compile Include="TopicLocator.cs" />
+    <Compile Include="Persistance\PersistanceRequestProcessorBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cache\" />
