@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Components;
@@ -66,6 +67,15 @@ namespace SVIBEL.Core.Config
 			T configInstance = default(T);
 
 			configInstance = (T)_configClients[typeof(T)]; 
+
+			return configInstance;
+		}
+
+		public IConfiguration<T> GetConfigByModel<T>() where T : IConfig
+		{
+			IConfiguration<T> configInstance = default(IConfiguration<T>);
+
+			configInstance = (IConfiguration<T>)_configClients.Where(x=> x as IConfiguration<T> != null);
 
 			return configInstance;
 		}

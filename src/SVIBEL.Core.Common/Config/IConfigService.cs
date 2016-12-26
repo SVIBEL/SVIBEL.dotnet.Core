@@ -9,5 +9,6 @@ namespace SVIBEL.Core.Common
 	{
 		void AddConfig<T>(T configInstance) where T : IConfiguration;
 		T GetConfig<T>() where T : IConfiguration;
+		IConfiguration<T> GetConfigByModel<T>() where T : IConfig;
 	}
 }

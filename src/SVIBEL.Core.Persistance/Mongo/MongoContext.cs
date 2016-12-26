@@ -7,6 +7,7 @@ using SVIBEL.Core.Common.Components;
 using SVIBEL.Core.Models;
 using System.Linq;
 using MongoDB.Bson.Serialization;
+using SVIBEL.Core.Common.Service;
 
 namespace SVIBEL.Core.Persistance
 {
@@ -23,7 +24,10 @@ namespace SVIBEL.Core.Persistance
 			SetupClassMapping();
 
 			_client = new MongoClient();
-			_database = _client.GetDatabase(ServerConfig.Snapshot.DBLocation);
+
+			var configService = ServiceLocator.Locator.Locate<IConfigService>();
+			var serverConfig = configService.GetConfigByModel<DBConfig>();
+			_database = _client.GetDatabase(serverConfig.Snapshot.DBLocation);
 		}
 
 		public void Insert<T>(T dataToInsert) where T : IEntity

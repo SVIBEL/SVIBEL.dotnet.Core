@@ -12,20 +12,7 @@ namespace SVIBEL.Core.Persistance
 	{
 		private IMessageBroker _messenger;
 		private List<DataProviderBackedProcessor> _cahceProcessors;
-		private IConfiguration<IConfig> _appConfig;
 
-		public IConfiguration<IConfig> AppConfig
-		{
-			get { return _appConfig; }
-			set
-			{
-				if (_appConfig != value)
-				{
-					_appConfig = value;
-					UpdateConfigForCacheProcessors();
-				}
-			}
-		}
 		public IMessageBroker Messenger { get { return _messenger ?? (_messenger = ServiceLocator.Locator.Locate<IMessageBroker>()); } }
 
 		protected abstract void UpdateConfigForCacheProcessors();
