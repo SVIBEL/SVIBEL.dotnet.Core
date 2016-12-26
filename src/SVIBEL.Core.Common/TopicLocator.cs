@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SVIBEL.Core.Persistance
+namespace SVIBEL.Core.Common
 {
-	public abstract class TopicLocator<T>
+	public abstract class TopicLocator<T> where T : struct, IConvertible
 	{
 		public Dictionary<T, string> TopicList { get; set; }
 

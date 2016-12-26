@@ -14,7 +14,7 @@ namespace SVIBEL.Core.Persistance
 		}
 
 
-		public CRUDMessagPersistor(IDataContext provider, IMessageBroker messenger, string topic) : base(provider, messenger, topic)
+		public CRUDMessagPersistor(IDataContext provider, string topic) : base(provider, topic)
 		{
 		}
 

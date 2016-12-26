@@ -17,12 +17,16 @@
     <PackageReference Include="NETStandard.Library">
       <Version>1.6.1</Version>
     </PackageReference>
+    <PackageReference Include="Auth0">
+      <Version>3.6.0</Version>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="AuthClientFactory.cs" />
     <Compile Include="DummyAuthClient.cs" />
     <Compile Include="IAuthClient.cs" />
+    <Compile Include="Auth0Client.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
