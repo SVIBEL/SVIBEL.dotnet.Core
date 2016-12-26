@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVIBEL.Core.Config", "SVIBE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVIBEL.Core.ConsoleHarness.Mac", "SVIBEL.Core.ConsoleHarness\SVIBEL.Core.ConsoleHarness.Mac.csproj", "{2799CA00-EE8A-4A7F-9B99-C9CF6B7678DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVIBEL.Core.Persistance", "SVIBEL.Core.Persistance\SVIBEL.Core.Persistance.csproj", "{A158A7E6-F2A4-49B4-953F-309C3D3CB80C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{2799CA00-EE8A-4A7F-9B99-C9CF6B7678DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2799CA00-EE8A-4A7F-9B99-C9CF6B7678DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2799CA00-EE8A-4A7F-9B99-C9CF6B7678DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A158A7E6-F2A4-49B4-953F-309C3D3CB80C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A158A7E6-F2A4-49B4-953F-309C3D3CB80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A158A7E6-F2A4-49B4-953F-309C3D3CB80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A158A7E6-F2A4-49B4-953F-309C3D3CB80C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

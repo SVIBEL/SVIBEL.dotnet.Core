@@ -80,7 +80,9 @@ namespace SVIBEL.Core.Messaging
 			{
 				_rabbitMQLogger = new RabbitLogger();
 
-				ServerConfig = ServiceLocator.Locator.Locate<X>();
+				var configService = ServiceLocator.Locator.Locate<IConfigService>();
+
+				ServerConfig = configService.GetConfig<X>();
 				_activeSubscriptions = new Dictionary<Guid, EasyNetQ.ISubscriptionResult>();
 				BuildAuth();
 				BuildMQ(ServerConfig.Snapshot.ConnectionString);

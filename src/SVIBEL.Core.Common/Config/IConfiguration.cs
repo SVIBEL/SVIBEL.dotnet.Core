@@ -4,7 +4,7 @@ using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Common
 {
-	public interface IConfiguration<T> : IService where T : IConfig
+	public interface IConfiguration : IService
 	{
 		event EventHandler ConfigChanged;
 		event EventHandler ConfigReady;
@@ -13,6 +13,10 @@ namespace SVIBEL.Core.Common
 
 		string CacheTopic { get; }
 		string LiveTopic { get; }
+	}
+
+	public interface IConfiguration<T> : IConfiguration
+	{
 		T Snapshot { get; set; }
 	}
 }

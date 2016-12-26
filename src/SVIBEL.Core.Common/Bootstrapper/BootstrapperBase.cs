@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SVIBEL.Core.Common.Messaging;
 using SVIBEL.Core.Common.Service;
+using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Common.Bootstrapper
 {
@@ -11,48 +12,66 @@ namespace SVIBEL.Core.Common.Bootstrapper
 		public event EventHandler BootstrappingFinished;
 
 		private IService _messageBroker;
-		private List<IService> _servicesToBootstrap;
-		private Dictionary<Type, Func<IService>> _staticConfig;
+		private IConfigService _configService;
+		private List<IService> _requiredServices;
 
 		public BootstrapperBase()
 		{
-			_servicesToBootstrap = new List<IService>();
+			_requiredServices = new List<IService>();
 		}
 
 		public abstract void SetupBootstrap();
 		protected abstract void RegisterCoreServices();
 
-		protected virtual void AddStaticConfig(Dictionary<Type, Func<IService>> staticConfigs)
+		public void RunBootstrap()
 		{
-			_staticConfig = staticConfigs;
-			foreach (var staticConfig in staticConfigs)
-			{
-				ServiceLocator.Locator.AddServiceMapping(staticConfig.Key, staticConfig.Value);
-			}
+			_configService.Build(null);
+			_configService.Start(null);
+
+			_messageBroker.Start(null);
+			// all event handlers are registered by now, once the messageBroker starts all other services will
+			// start as well.
+			// BootstrappingFinished will be called when all required services have started
 		}
 
-		protected virtual void BootstrapMessageService(Func<IService> serviceMaker)
+		protected virtual void AddStaticConfigItem<T>(T instance) where T : IConfiguration
+		{
+			instance.Build(null);
+			instance.Start(null);
+			_configService.AddConfig(instance);
+		}
+
+		protected virtual void AddRequiredConfigItem<T>(T instance) where T : IConfiguration
+		{
+			_requiredServices.Add(instance);
+			_configService.AddConfig(instance);
+		}
+
+
+		protected virtual void RegisterConfigService(Func<IConfigService> serviceMaker)
+		{
+			_configService = serviceMaker();
+			ServiceLocator.Locator.AddServiceToLocator<IConfigService>(_configService);
+		}
+		protected virtual void RegisterMessageService(Func<IMessageBroker> serviceMaker)
 		{
 			_messageBroker = serviceMaker();
-			ServiceLocator.Locator.AddServiceToLocator<IMessageBroker>(_messageBroker);
-
 			_messageBroker.Started += MessageServiceBootstrapped;
-			_messageBroker.Start(null);
+			ServiceLocator.Locator.AddServiceToLocator<IMessageBroker>(_messageBroker);
 		}
-
-		protected virtual void AddServiceForBootstrap(Type serviceType, Func<IService> builder)
+		protected virtual void RegisterRequiredServices(Type serviceType, Func<IService> builder)
 		{
 			var service = builder();
-			_servicesToBootstrap.Add(service);
+			_requiredServices.Add(service);
 			ServiceLocator.Locator.AddServiceToLocator(serviceType, service);
 		}
 
 		protected virtual void BootstrapServices()
 		{
-			if (_servicesToBootstrap != null && _servicesToBootstrap.Count > 0)
+			if (_requiredServices != null && _requiredServices.Count > 0)
 			{
 
-				foreach (var service in _servicesToBootstrap)
+				foreach (var service in _requiredServices)
 				{
 					service.Started += BootstrapServiceStarted;
 					service.Start(null);
@@ -76,7 +95,7 @@ namespace SVIBEL.Core.Common.Bootstrapper
 
 		private void BootstrapServiceStarted(object sender, EventArgs e)
 		{
-			var allServicesRunning = _servicesToBootstrap.All(x => x.IsStarted);
+			var allServicesRunning = _requiredServices.All(x => x.IsStarted);
 
 			if (allServicesRunning)
 			{

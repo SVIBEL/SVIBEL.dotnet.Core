@@ -16,24 +16,8 @@ class Program
 	{
 	}
 
-	public class AppConfig : IConfig
+	public class TestConfigService : ConfigServiceBase
 	{
-		public string Id
-		{
-			get;
-			set;
-		}
-
-		public bool IsEditable
-		{
-			get;
-			set;
-		}
-	}
-
-	public class AppConfigClient : PersistedConfigClientBase<AppConfig> 
-	{
-		
 	}
 
 	public class TestBootstrapper : BootstrapperBase
@@ -44,11 +28,15 @@ class Program
 		{
 			RegisterCoreServices();
 
-			BootstrapStaticConfig();
+			RegisterConfigService(() => new TestConfigService());
+			var staticConfigClient = MakeRabbitMQStaticConfigClient();
+			AddStaticConfigItem(staticConfigClient);
+			// add the static config as it is required for the MessageService
 
+			RegisterMessageService(MessageBrokerFactory.MakeMessageBrokerService<RabbitMQStaticConfigClient>);
 			RegisterMessageServiceDependentServices();
 
-			BootstrapMessageService(MessageBrokerFactory.MakeMessageBrokerService<RabbitMQStaticConfigClient>);
+			//AddRequiredConfigItem()
 
 			_logger.Log("IMessagebroker registered");
 		}
@@ -65,26 +53,8 @@ class Program
 			_logger.Log("ILogger registered to ConsoleLogger");
 		}
 
-		private void BootstrapStaticConfig()
-		{
-			var staticConfigClients = new Dictionary<Type, Func<IService>>();
-			staticConfigClients.Add(typeof(RabbitMQStaticConfigClient), MakeRabbitMQStaticConfigClient);
-			AddStaticConfig(staticConfigClients);
-			_logger.Log("RabbitMQStaticConfigClient registered");
-		}
-
 		private void RegisterMessageServiceDependentServices()
 		{
-			AddServiceForBootstrap(typeof(AppConfigClient), () => 
-			{
-				var client = new AppConfigClient();
-				var buildParams = new ConfigBuildParams<AppConfig>();
-				buildParams.CacheTopic = "Thor.Cache.AppConfig";
-				buildParams.LiveTopic = "Thor.Persistance.AppConfig";
-
-				client.Build(buildParams);
-				return client;
-			});
 		}
 	}
 
@@ -95,6 +65,7 @@ class Program
 		TestBootstrapper bootstrapper = new TestBootstrapper();
 		bootstrapper.BootstrappingFinished += BootstrapperFinished;
 		bootstrapper.SetupBootstrap();
+		bootstrapper.RunBootstrap();
 
 		Console.ReadLine();
 	}
@@ -114,7 +85,7 @@ class Program
 			User = "admin",
 			Password = "admin",
 			Port = 5672,
-			Host = "localhost",
+			Host = "192.168.233.239",
 			ExchangeName = "Thor_Exchange",
 			UnauthorizedRequestTopic = MessagingConstants.UnauthorizedRequestTopic
 		};

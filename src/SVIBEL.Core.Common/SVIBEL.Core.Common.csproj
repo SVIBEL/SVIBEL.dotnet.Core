@@ -38,6 +38,7 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Service\SelfStartingServiceContainer.cs" />
+    <Compile Include="Config\IConfigService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />

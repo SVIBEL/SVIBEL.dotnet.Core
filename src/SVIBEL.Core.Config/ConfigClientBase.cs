@@ -5,7 +5,7 @@ using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Common
 {
-	public abstract class ConfigClientBase<T> : IConfiguration<T>, IStartableComponent, IBuildableComponent where T: IConfig
+	public abstract class ConfigClientBase<T> : IConfiguration<T> where T: IConfig
 	{
 		public event EventHandler ConfigChanged;
 		public event EventHandler ConfigReady;
