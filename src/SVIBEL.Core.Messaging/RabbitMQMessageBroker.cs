@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using RabbitMQ.Client;
 using SVIBEL.Core.AuthenticationClient;
 using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Components;
 using SVIBEL.Core.Common.Messaging;
 using SVIBEL.Core.Models;
-using SVIBEL.Core.Models.Messaging;
 using SVIBEL.Core.Common.Service;
+using SVIBEL.Core.Common.Messaging.Messages;
 
 namespace SVIBEL.Core.Messaging
 {
-	public class RabbitMQMessageBroker<X> : IMessageBrokerConfigured<X> where X:class, IConfiguration<MessagingConfig>
+	public class RabbitMQMessageBroker<X> : IMessageBrokerConfigured<X>
+		where X : class, IConfiguration<ServerConfig>
 	{
 		public event EventHandler Started;
 
 		private EasyNetQ.IEasyNetQLogger _rabbitMQLogger;
-		private Dictionary<Guid, EasyNetQ.ISubscriptionResult> _activeSubscriptions;
+		private Dictionary<Guid, EasyNetQ.Topology.IQueue> _activeSubscriptions;
 		private IAuthClient _authClient;
 		private EasyNetQ.IBus _bus;
 		private bool _isRunning;
@@ -83,11 +83,12 @@ namespace SVIBEL.Core.Messaging
 				var configService = ServiceLocator.Locator.Locate<IConfigService>();
 
 				ServerConfig = configService.GetConfig<X>();
-				_activeSubscriptions = new Dictionary<Guid, EasyNetQ.ISubscriptionResult>();
+				_activeSubscriptions = new Dictionary<Guid, EasyNetQ.Topology.IQueue>();
 				BuildAuth();
-				BuildMQ(ServerConfig.Snapshot.ConnectionString);
 
-				_unauthorizedRequestTopic = ServerConfig.Snapshot.UnauthorizedRequestTopic;
+				BuildMQ(ServerConfig.Snapshot.Messaging.ConnectionString);
+
+				_unauthorizedRequestTopic = ServerConfig.Snapshot.Messaging.UnauthorizedRequestTopic;
 			}
 		}
 
@@ -97,34 +98,42 @@ namespace SVIBEL.Core.Messaging
 			{
 				var sub = _activeSubscriptions[externalId];
 				_activeSubscriptions.Remove(externalId);
-				sub.Dispose();
-				_bus.Advanced.QueueDelete(sub.Queue);
+				//sub.Dispose();
+				_bus.Advanced.QueueDelete(sub);
 			}
 		}
 
-		public Guid SubscribeTopic<T>(string topic, string subscriptionId, Action<IMessage<T>> onNext) where T:IEntity
+		public Guid SubscribeTopic<T, U>(string topic, string subscriptionId, Action<IMessage<T>> onNext) where U : class, IMessage<T>
 		{
 			// All incoming messages are token validated before they are 
 			// handled by the component using it.
-			var subscription = _bus.Subscribe<IMessage<T>>(subscriptionId, msg => HandleMessage(onNext, msg), x => x.WithTopic(topic));
+			//var queue = _bus.Advanced.QueueDeclare("Thor_"+subscriptionId);
+			//var exchange = _bus.Advanced.ExchangeDeclare(ServerConfig.Snapshot.Messaging.ExchangeName, ExchangeType.Topic);
+			//var binding = _bus.Advanced.Bind(exchange, queue, topic);
+			//_bus.Advanced.Consume<IMessage<T>>(queue,(response, arg2) => onNext(response.Body));
+
+			var subscription = _bus.Subscribe<IMessage<T>>(subscriptionId, msg => HandleMessage<T,U>(onNext, msg), x => x.WithTopic(topic));
 			var externaId = Guid.NewGuid();
-			_activeSubscriptions.Add(externaId, subscription);
+			_activeSubscriptions.Add(externaId, subscription.Queue);
 
 			return externaId;
 		}
 
-		public void CacheRequest<T, Z>(string cacheTopic, ICacheRequest<T> request, Action<ICacheResponse<Z>> onNext) where T: IEntity where Z : IEntity
+
+		public void CacheRequest<T, Z, U>(string cacheTopic, ICacheRequest<T> request, Action<ICacheResponse<Z>> onNext) 
+			where Z : IEntity
+			where U : class, IMessage<Z>
 		{
 			if (IsConnected)
 			{
 				var responseTopic = MessagingConstants.CacheRequestPrefix + Guid.NewGuid().ToString();
 				var queue = _bus.Advanced.QueueDeclare(responseTopic, false, false, true, true, null, 10000);
-				var exchange = _bus.Advanced.ExchangeDeclare(ServerConfig.Snapshot.ExchangeName, ExchangeType.Topic);
+				var exchange = _bus.Advanced.ExchangeDeclare(ServerConfig.Snapshot.Messaging.ExchangeName, ExchangeType.Topic);
 				var binding = _bus.Advanced.Bind(exchange, queue, responseTopic);
 
 				// setup receiving topic
 				List<Z> payload = new List<Z>();
-				_bus.Advanced.Consume<IMessage<Z>>(queue, (msg, info) =>
+				_bus.Advanced.Consume<U>(queue, (msg, info) =>
 				{
 					if (Equals(msg.Body.MessageContent, default(Z)))
 					{
@@ -145,33 +154,37 @@ namespace SVIBEL.Core.Messaging
 			}
 		}
 
-		public void CacheResponder<T, Z>(string topic, string name, Func<ICacheRequest<T>, ICacheResponse<Z>> getPayload) where T : IEntity where Z : IEntity
+		public void CacheResponder<T, Z, Y, W>(string topic, string name, Func<ICacheRequest<T>, ICacheResponse<Z>> getPayload)
+			where Z : IEntity
+			where Y : class, IMessage<T>
+			where W : class, IMessage<Z>, new()
 		{
 			if (IsConnected)
 			{
-				SubscribeTopic<T>(topic, name, (req) =>
-				{
-					ICacheRequest<T> cacheRequest = req as ICacheRequest<T>;
+				SubscribeTopic<T, Y>(topic, name, (req) =>
+				 {
+					 ICacheRequest<T> cacheRequest = req as ICacheRequest<T>;
 
-					var payload = getPayload(cacheRequest);
+					 var payload = getPayload(cacheRequest);
 
-					foreach (var payloadItem in payload.Payload)
-					{
-						Task.Run(() => {
-							IMessage<Z> content = new BasicMessage<Z>() { MessageContent = payloadItem };
-							Publish<Z>(cacheRequest.ResponseTopic, content);
-						});
-					}
+					 if (payload.Payload != null)
+					 {
+						 foreach (var payloadItem in payload.Payload)
+						 {
+							 IMessage<Z> content = new W { MessageContent = payloadItem };
+							 Publish<Z>(cacheRequest.ResponseTopic, content);
+						 }
+					 }
 
-					// publish empty item to signal end of stream
-					// consumer should close the private topic when this is received
-					Publish<Z>(cacheRequest.ResponseTopic, new BasicMessage<Z>() { MessageContent = default(Z) });
-				});
+					 // publish empty item to signal end of stream
+					 // consumer should close the private topic when this is received
+					 Publish<Z>(cacheRequest.ResponseTopic, new W() { MessageContent = default(Z) });
+				 });
 
 			}
 		}
 
-		public void Publish<T>(string topic, IMessage<T> msg) where T : IEntity
+		public void Publish<T>(string topic, IMessage<T> msg)
 		{
 			if (IsConnected)
 			{
@@ -179,7 +192,7 @@ namespace SVIBEL.Core.Messaging
 			}
 		}
 
-		private void HandleMessage<T>(Action<IMessage<T>> validAction, IMessage<T> msg) where T : IEntity
+		private void HandleMessage<T,U>(Action<IMessage<T>> validAction, IMessage<T> msg)
 		{
 			if (!IsAuthenticationRequired || TrustedToken(msg.Token) || IsMessageFromAuthenticatedUser<T>(msg))
 			{
@@ -191,7 +204,7 @@ namespace SVIBEL.Core.Messaging
 			}
 		}
 
-		private void PublishUnauthenticatedRequestNotification<T>(IMessage<T> msg) where T : IEntity
+		private void PublishUnauthenticatedRequestNotification<T>(IMessage<T> msg)
 		{
 			if (!string.IsNullOrEmpty(_unauthorizedRequestTopic) && !string.IsNullOrEmpty(msg.SenderId))
 			{
@@ -208,7 +221,7 @@ namespace SVIBEL.Core.Messaging
 			return token == MessagingConstants.ServerToken;
 		}
 
-		private bool IsMessageFromAuthenticatedUser<T>(IMessage<T> msg) where T : IEntity
+		private bool IsMessageFromAuthenticatedUser<T>(IMessage<T> msg)
 		{
 			var isValid = _authClient.IsTokenValid(msg.Token);
 			return isValid;
@@ -216,15 +229,17 @@ namespace SVIBEL.Core.Messaging
 
 		private void BuildAuth()
 		{
-			_authClient = AuthClientFactory.GetAuthClient();
+			var authClientService = ServiceLocator.Locator.Locate<IAuthenticationClientService>();
+			_authClient = authClientService.AuthClient;
 		}
 
 		private void BuildMQ(string connectionString)
-		{	
+		{
 			_bus = EasyNetQ.RabbitHutch.CreateBus(
 				connectionString,
 				new EasyNetQ.AdvancedBusEventHandlers(Connected, Disconnected),
 				(x) => x.Register((y) => _rabbitMQLogger)
+						.Register<EasyNetQ.IConventions, AttributeBasedConventions>()
 			);
 		}
 

@@ -75,7 +75,7 @@ namespace SVIBEL.Core.Config
 		{
 			IConfiguration<T> configInstance = default(IConfiguration<T>);
 
-			configInstance = (IConfiguration<T>)_configClients.Where(x=> x as IConfiguration<T> != null);
+			configInstance = _configClients.Values.FirstOrDefault(x=> x as IConfiguration<T> != null) as IConfiguration<T>;
 
 			return configInstance;
 		}

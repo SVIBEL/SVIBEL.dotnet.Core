@@ -12,7 +12,7 @@ namespace SVIBEL.Core.Config
 			IsConfigEditable = false;
 		}
 
-		public virtual void Build(BuildParams buildParams)
+		public override void Build(BuildParams buildParams)
 		{
 			base.Build(buildParams);
 			IsSnapshotReady = true;

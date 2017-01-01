@@ -24,18 +24,10 @@
     <Compile Include="IConfig.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ITimestamppedEntity.cs" />
-    <Compile Include="Messaging\BasicMessage.cs" />
-    <Compile Include="Messaging\CacheRequest.cs" />
-    <Compile Include="Messaging\CacheResponse.cs" />
-    <Compile Include="Messaging\ICacheRequest.cs" />
-    <Compile Include="Messaging\ICacheResponse.cs" />
-    <Compile Include="Messaging\IMessage.cs" />
-    <Compile Include="Messaging\MessageBase.cs" />
-    <Compile Include="Messaging\MessagingConfig.cs" />
-    <Compile Include="Messaging\UpdateRequestBase.cs" />
-    <Compile Include="Messaging\ConfigCacheBase.cs" />
     <Compile Include="SearchResult.cs" />
     <Compile Include="ServerBaseConfig.cs" />
+    <Compile Include="MessagingConfig.cs" />
+    <Compile Include="ConfigCacheBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

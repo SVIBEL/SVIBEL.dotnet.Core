@@ -1,6 +1,5 @@
 ﻿using System;
 using SVIBEL.Core.Common.Service;
-using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Common
 {

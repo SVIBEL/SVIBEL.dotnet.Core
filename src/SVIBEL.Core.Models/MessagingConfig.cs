@@ -1,7 +1,7 @@
 ﻿using System;
-namespace SVIBEL.Core.Models.Messaging
+namespace SVIBEL.Core.Models
 {
-	public class MessagingConfig : IConfig
+	public class MessagingConfig
 	{
 		public string Host { get; set; }
 		public string UnauthorizedRequestTopic { get; set; }

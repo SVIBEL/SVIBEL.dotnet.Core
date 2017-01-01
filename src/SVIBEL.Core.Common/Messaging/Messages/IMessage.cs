@@ -1,7 +1,9 @@
 ﻿using System;
-namespace SVIBEL.Core.Models.Messaging
+
+namespace SVIBEL.Core.Common.Messaging.Messages
 {
-	public interface IMessage<T> where T: IEntity
+	[Messaging]
+	public interface IMessage<T>
 	{
 		string Token { get; set; }
 		T MessageContent { get; set; }

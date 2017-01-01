@@ -5,14 +5,21 @@ using SVIBEL.Core.Common.Components;
 using SVIBEL.Core.Models;
 using SVIBEL.Core.Common.Messaging;
 using SVIBEL.Core.Common.Service;
-using SVIBEL.Core.Models.Messaging;
+using SVIBEL.Core.Common.Messaging.Messages;
 
 namespace SVIBEL.Core.Config
 {
-	public abstract class PersistedConfigClientBase<T> : ConfigClientBase<T> where T: IConfig
+	/// <summary>
+	/// <typeparam name="T">Type of the Entity</typeparam>
+	/// <typeparam name="U">Type of the CacheRequest</typeparam>
+	/// <typeparam name="Z">Type of the Message to receive</typeparam>
+	/// </summary>
+	public abstract class PersistedConfigClientBase<T, U, Z> : ConfigClientBase<T> 
+		where T: IConfig
+		where Z : class, IMessage<T>
 	{
 		private Guid _subscription;
-		private IMessageBroker _messenger;
+		protected IMessageBroker _messenger;
 
 		public PersistedConfigClientBase():base()
 		{
@@ -46,6 +53,14 @@ namespace SVIBEL.Core.Config
 			}
 		}
 
+		protected virtual void GetCache()
+		{
+			ICacheRequest<U> request = new CacheRequest<U>();
+			request.Token = MessagingConstants.ServerToken;
+
+			_messenger.CacheRequest<U, T, Z>(CacheTopic, request, OnCacheReceived);
+		}
+
 
 		private void UnScubscribe()
 		{
@@ -54,15 +69,7 @@ namespace SVIBEL.Core.Config
 
 		private void SubscribeToUpdates()
 		{
-			_messenger.SubscribeTopic<T>(LiveTopic, "CONFIG_LIVE", OnConfigUpdate);
-		}
-
-		private void GetCache()
-		{
-			var request = new CacheRequest<ConfigCacheBase>();
-			request.Token = MessagingConstants.ServerToken;
-
-			_messenger.CacheRequest<ConfigCacheBase, T>(CacheTopic, request, OnCacheReceived);
+			_messenger.SubscribeTopic<T,Z>(LiveTopic, "CONFIG_LIVE", OnConfigUpdate);
 		}
 
 		private void OnConfigUpdate(IMessage<T> update)
@@ -71,7 +78,7 @@ namespace SVIBEL.Core.Config
 			RaiseConfigChanged();
 		}
 
-		private void OnCacheReceived(ICacheResponse<T> cache)
+		protected void OnCacheReceived(ICacheResponse<T> cache)
 		{
 			var config = cache.Payload.FirstOrDefault();
 			if (config != null)

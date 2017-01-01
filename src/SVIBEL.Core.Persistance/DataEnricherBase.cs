@@ -5,8 +5,8 @@ namespace SVIBEL.Core.Persistance
 {
 	public abstract class DataEnricherBase<T>
 	{
-		internal IDataContext _provider;
-		internal IEnumerable<T> _dataItems;
+		protected IDataContext _provider;
+		protected IEnumerable<T> _dataItems;
 
 		public DataEnricherBase(IEnumerable<T> dataItem, IDataContext provider)
 		{
@@ -14,7 +14,7 @@ namespace SVIBEL.Core.Persistance
 			_dataItems = dataItem;
 		}
 
-		internal abstract void SetRefDataItmes();
+		protected abstract void SetRefDataItmes();
 
 		public IEnumerable<T> EnrichRefData()
 		{

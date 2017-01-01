@@ -5,9 +5,9 @@ namespace SVIBEL.Core.AuthenticationClient
 {
 	public static class AuthClientFactory
 	{
-		public static IAuthClient GetAuthClient()
+		public static IAuthClient GetAuthClient(string authServiceLocation)
 		{
-			return new Auth0Client("https://svibel.auth0.com");
+			return new Auth0Client(authServiceLocation);
 		}
 	}
 }

@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj">
-      <Project>{1140A6AB-62BD-41E3-AF7A-50208EA18614}</Project>
+      <Project>{08BA18D0-7853-41FA-8088-7E8762F8E8C0}</Project>
       <Name>SVIBEL.Core.Models</Name>
     </ProjectReference>
   </ItemGroup>
@@ -40,6 +40,18 @@
     <Compile Include="Service\SelfStartingServiceContainer.cs" />
     <Compile Include="Config\IConfigService.cs" />
     <Compile Include="TopicLocator.cs" />
+    <Compile Include="Components\ComponentHostBase.cs" />
+    <Compile Include="Components\IComponentHost.cs" />
+    <Compile Include="Messaging\Messages\BasicMessage.cs" />
+    <Compile Include="Messaging\Messages\CacheRequest.cs" />
+    <Compile Include="Messaging\Messages\CacheResponse.cs" />
+    <Compile Include="Messaging\Messages\ICacheRequest.cs" />
+    <Compile Include="Messaging\Messages\ICacheResponse.cs" />
+    <Compile Include="Messaging\Messages\IMessage.cs" />
+    <Compile Include="Messaging\Messages\MessageBase.cs" />
+    <Compile Include="Messaging\Messages\UpdateRequestBase.cs" />
+    <Compile Include="Messaging\Messages\MessagingAttribute.cs" />
+    <Compile Include="Messaging\Messages\IMessagingAttributeProviderService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
@@ -48,6 +60,7 @@
     <Folder Include="Service\" />
     <Folder Include="Bootstrapper\" />
     <Folder Include="Logging\" />
+    <Folder Include="Messaging\Messages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

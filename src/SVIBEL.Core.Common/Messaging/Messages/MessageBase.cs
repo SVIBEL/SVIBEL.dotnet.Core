@@ -1,8 +1,12 @@
 ﻿using System;
-namespace SVIBEL.Core.Models.Messaging
+using SVIBEL.Core.Models;
+
+namespace SVIBEL.Core.Common.Messaging.Messages
 {
-	public abstract class MessageBase<T> : IMessage<T>, ITimestamppedEntity where T :IEntity
+	public abstract class MessageBase<T> : IMessage<T>, ITimestamppedEntity
 	{
+		public string Id { get; set; }
+
 		public DateTime Timestamp { get; set; }
 
 		public T MessageContent { get; set; }

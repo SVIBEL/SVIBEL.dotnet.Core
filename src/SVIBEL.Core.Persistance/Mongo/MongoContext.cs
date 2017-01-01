@@ -8,6 +8,9 @@ using SVIBEL.Core.Models;
 using System.Linq;
 using MongoDB.Bson.Serialization;
 using SVIBEL.Core.Common.Service;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson;
 
 namespace SVIBEL.Core.Persistance
 {
@@ -16,18 +19,19 @@ namespace SVIBEL.Core.Persistance
 		protected static IMongoClient _client;
 		protected static IMongoDatabase _database;
 
-		internal Dictionary<Type, string> _dataTypeToCollectionNameMapping;
+		protected Dictionary<Type, string> _dataTypeToCollectionNameMapping;
 
 		public virtual void Build(BuildParams buildParams)
 		{
 			SetupDatypeToCollectionMapping();
 			SetupClassMapping();
 
-			_client = new MongoClient();
-
 			var configService = ServiceLocator.Locator.Locate<IConfigService>();
-			var serverConfig = configService.GetConfigByModel<DBConfig>();
-			_database = _client.GetDatabase(serverConfig.Snapshot.DBLocation);
+			var serverConfig = configService.GetConfigByModel<ServerConfig>();
+
+			var mongoUrl = MongoUrl.Create("mongodb://"+serverConfig.Snapshot.Database.DBIP+"/"+serverConfig.Snapshot.Database.DBLocation);
+			_client = new MongoClient(mongoUrl);
+			_database = _client.GetDatabase(mongoUrl.DatabaseName);
 		}
 
 		public void Insert<T>(T dataToInsert) where T : IEntity
@@ -86,7 +90,7 @@ namespace SVIBEL.Core.Persistance
 			GetMongoDataset<T>().DeleteOne(x => x.Id == item.Id);
 		}
 
-		internal IMongoCollection<T> GetMongoDataset<T>() where T :IEntity
+		protected IMongoCollection<T> GetMongoDataset<T>() where T :IEntity
 		{
 			var isConnected = _client.Cluster.Description.State == MongoDB.Driver.Core.Clusters.ClusterState.Connected;
 			IMongoCollection<T> result = null;
@@ -103,8 +107,24 @@ namespace SVIBEL.Core.Persistance
 
 			return result;
 		}
+		protected void MapClass<T>() where T : IEntity
+		{
+			if (BsonClassMap.IsClassMapRegistered(typeof(T)))
+			{
+				return;
+			}
 
-		internal abstract void SetupDatypeToCollectionMapping();
-		internal abstract void SetupClassMapping();
+			BsonClassMap.RegisterClassMap<T>(cm =>
+			{
+				cm.AutoMap();
+				cm.SetIgnoreExtraElements(true);
+				cm.MapIdProperty(c => c.Id)
+					.SetIdGenerator(StringObjectIdGenerator.Instance)
+					.SetSerializer(new StringSerializer(BsonType.ObjectId));
+			});
+		}
+
+		protected abstract void SetupDatypeToCollectionMapping();
+		protected abstract void SetupClassMapping();
 	}
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using SVIBEL.Core.Common.Messaging;
+using SVIBEL.Core.Common.Messaging.Messages;
 using SVIBEL.Core.Models;
-using SVIBEL.Core.Models.Messaging;
 
 namespace SVIBEL.Core.Persistance
 {
-	public class CRUDMessagPersistor<T> : MessagePersistor<T> where T : IEntity
+	public class CRUDMessagPersistor<T,U> : MessagePersistor<T, U>
+		where T : IEntity
+		where U : class, IMessage<T>
 	{
 		public bool IsOperationFailed { get; set; }
 		public string FailReason
@@ -18,7 +20,7 @@ namespace SVIBEL.Core.Persistance
 		{
 		}
 
-		internal override void HandleMessage(IMessage<T> msg)
+		protected override void HandleMessage(IMessage<T> msg)
 		{
 			IsOperationFailed = false;
 			FailReason = string.Empty;
@@ -42,17 +44,17 @@ namespace SVIBEL.Core.Persistance
 			}
 		}
 
-		internal virtual void OnInsert(T data)
+		protected virtual void OnInsert(T data)
 		{
 			Provider.Insert(data);
 		}
 
-		internal virtual void OnUpdate(T data)
+		protected virtual void OnUpdate(T data)
 		{
 			Provider.UpdateItem(data);
 		}
 
-		internal virtual void OnDelete(T data)
+		protected virtual void OnDelete(T data)
 		{
 			Provider.Delete<T>(data);
 		}

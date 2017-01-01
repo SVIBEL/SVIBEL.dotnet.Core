@@ -24,24 +24,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj">
-      <Project>{1140A6AB-62BD-41E3-AF7A-50208EA18614}</Project>
+      <Project>{08BA18D0-7853-41FA-8088-7E8762F8E8C0}</Project>
       <Name>SVIBEL.Core.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\SVIBEL.Core.Messaging\SVIBEL.Core.Messaging.csproj">
-      <Project>{B7EE590D-C37C-4F00-A18A-9DC9EA2702D8}</Project>
+      <Project>{13C89E32-E958-4D13-B811-74BB8B0F07A7}</Project>
       <Name>SVIBEL.Core.Messaging</Name>
     </ProjectReference>
     <ProjectReference Include="..\SVIBEL.Core.Config\SVIBEL.Core.Config.csproj">
-      <Project>{9A04765D-487F-439B-9697-DEADC3809206}</Project>
+      <Project>{1260A81E-3AA3-41BA-BB7C-4F9A48565D72}</Project>
       <Name>SVIBEL.Core.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\SVIBEL.Core.Common\SVIBEL.Core.Common.csproj">
-      <Project>{00D7DB03-3F7F-41F7-95C9-FD6589E8F110}</Project>
+      <Project>{3F1EC159-4DD7-4FE5-8F8B-FC25221115C4}</Project>
       <Name>SVIBEL.Core.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SVIBEL.Core.AuthenticationClient\SVIBEL.Core.AuthenticationClient.csproj">
-      <Project>{C98BB250-3746-497D-9EA4-DCCEB029BFBD}</Project>
-      <Name>SVIBEL.Core.AuthenticationClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +51,8 @@
     <Compile Include="Persistance\CRUDMessagPersistor.cs" />
     <Compile Include="Mongo\MongoContext.cs" />
     <Compile Include="Persistance\PersistanceRequestProcessorBase.cs" />
+    <Compile Include="Cache\ICacheRequestProcessor.cs" />
+    <Compile Include="Persistance\IPersistanceRequestProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cache\" />

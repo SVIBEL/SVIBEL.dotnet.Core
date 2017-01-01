@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using SVIBEL.Core.Common.Messaging;
 using SVIBEL.Core.Common.Service;
-using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Common.Bootstrapper
 {
@@ -15,13 +14,18 @@ namespace SVIBEL.Core.Common.Bootstrapper
 		private IConfigService _configService;
 		private List<IService> _requiredServices;
 
+		protected List<IService> _preRequiredServices;
+
 		public BootstrapperBase()
 		{
 			_requiredServices = new List<IService>();
+			_preRequiredServices = new List<IService>();
 		}
 
 		public abstract void SetupBootstrap();
+		public abstract void RegisterMessageServiceDependentServices(List<IService> services);
 		protected abstract void RegisterCoreServices();
+		protected abstract void RegisterMessagintAttributeProvider();
 
 		public void RunBootstrap()
 		{
@@ -70,6 +74,10 @@ namespace SVIBEL.Core.Common.Bootstrapper
 		{
 			if (_requiredServices != null && _requiredServices.Count > 0)
 			{
+				foreach (var service in _preRequiredServices)
+				{
+					service.Start(null);
+				}
 
 				foreach (var service in _requiredServices)
 				{

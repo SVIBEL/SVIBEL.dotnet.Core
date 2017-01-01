@@ -27,6 +27,13 @@
     <Compile Include="DummyAuthClient.cs" />
     <Compile Include="IAuthClient.cs" />
     <Compile Include="Auth0Client.cs" />
+    <Compile Include="IAuthenticationClientService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SVIBEL.Core.Common\SVIBEL.Core.Common.csproj">
+      <Project>{3F1EC159-4DD7-4FE5-8F8B-FC25221115C4}</Project>
+      <Name>SVIBEL.Core.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

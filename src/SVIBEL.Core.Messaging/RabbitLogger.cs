@@ -17,21 +17,37 @@ namespace SVIBEL.Core.Messaging
 
 		public void DebugWrite(string format, params object[] args)
 		{
-			_logger.Log(format, args.Select(x=>x.ToString()).ToArray());
+			if (format == null || args == null)
+			{
+				return;
+			}
+			//_logger.Log(format, args.Select(x=>x.ToString()).ToArray());
 		}
 
 		public void ErrorWrite(Exception exception)
 		{
+			if (exception == null)
+			{
+				return;
+			}
 			_logger.Log("Exception:{0}", exception.Message);
 		}
 
 		public void ErrorWrite(string format, params object[] args)
 		{
-			_logger.Log(format, args.Select(x => x.ToString()).ToArray());
+			if (format == null || args == null)
+			{
+				return;
+			}
+			_logger.Log(format);
 		}
 
 		public void InfoWrite(string format, params object[] args)
 		{
+			if (format == null || args == null)
+			{
+				return;
+			}
 			_logger.Log(format, args.Select(x => x.ToString()).ToArray());
 		}
 	}

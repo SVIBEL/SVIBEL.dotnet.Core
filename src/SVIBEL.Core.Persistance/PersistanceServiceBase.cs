@@ -1,16 +1,13 @@
 ﻿using System;
-using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Components;
 using SVIBEL.Core.Common.Service;
-using SVIBEL.Core.Models;
-using SVIBEL.Core.Models.Messaging;
 
 namespace SVIBEL.Core.Persistance
 {
 	public abstract class PersistanceServiceBase : IService
 	{
-		private PersistanceRequestProcessorBase _messagePeristor;
-		private CacheRequestProcessorBase _cacheProcessing; 
+		protected IPersistanceRequestProcessor _messagePeristor;
+		protected ICacheRequestProcessor _cacheProcessing; 
 
 		public event EventHandler Started;
         public IDataContext Provider { get; private set; }

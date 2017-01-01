@@ -1,5 +1,7 @@
 ﻿using System;
-namespace SVIBEL.Core.Models.Messaging
+using SVIBEL.Core.Models;
+
+namespace SVIBEL.Core.Common.Messaging.Messages
 {
 	public class BasicMessage<T> : MessageBase<T> where T: IEntity
 	{

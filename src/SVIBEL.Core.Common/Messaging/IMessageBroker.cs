@@ -1,9 +1,8 @@
 ﻿using System;
-using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Components;
 using SVIBEL.Core.Common.Service;
 using SVIBEL.Core.Models;
-using SVIBEL.Core.Models.Messaging;
+using SVIBEL.Core.Common.Messaging.Messages;
 
 namespace SVIBEL.Core.Common.Messaging
 {
@@ -26,12 +25,17 @@ namespace SVIBEL.Core.Common.Messaging
 
 
 
-		Guid SubscribeTopic<T>(string topic, string subscriptionId, Action<IMessage<T>> onNext) where T : IEntity;
+		Guid SubscribeTopic<T, U>(string topic, string subscriptionId, Action<IMessage<T>> onNext) where U : class, IMessage<T>;
 		void UnSubscribeTopic(Guid externalId);
 
-		void CacheRequest<T, Z>(string cacheTopic, ICacheRequest<T> request, Action<ICacheResponse<Z>> onNext)where T : IEntity where Z : IEntity;
-		void CacheResponder<T, Z>(string topic, string name, Func<ICacheRequest<T>, ICacheResponse<Z>> getPayload) where T : IEntity where Z : IEntity;
+		void CacheRequest<T, Z, U>(string cacheTopic, ICacheRequest<T> request, Action<ICacheResponse<Z>> onNext) 
+			where Z : IEntity 
+			where U : class, IMessage<Z>;
+		void CacheResponder<T, Z, Y, W>(string topic, string name, Func<ICacheRequest<T>, ICacheResponse<Z>> getPayload)
+			where Z : IEntity
+			where Y : class, IMessage<T>
+			where W : class, IMessage<Z>, new();
 		void SubscribeTopic<T>(string v, object onSessionRequest);
-		void Publish<T>(string topic, IMessage<T> msg) where T : IEntity;
+		void Publish<T>(string topic, IMessage<T> msg);
 	}
 }

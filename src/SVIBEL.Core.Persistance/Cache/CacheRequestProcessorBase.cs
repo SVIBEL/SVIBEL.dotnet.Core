@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using SVIBEL.Core.Common;
 using SVIBEL.Core.Common.Messaging;
 using SVIBEL.Core.Common.Service;
-using SVIBEL.Core.Models;
 
 namespace SVIBEL.Core.Persistance
 {
-	public abstract class CacheRequestProcessorBase : DataProviderBackedProcessor
+	public abstract class CacheRequestProcessorBase : DataProviderBackedProcessor, ICacheRequestProcessor
 	{
 		private IMessageBroker _messenger;
-		private List<DataProviderBackedProcessor> _cahceProcessors;
+		protected List<DataProviderBackedProcessor> _cahceProcessors;
+
 
 		public IMessageBroker Messenger { get { return _messenger ?? (_messenger = ServiceLocator.Locator.Locate<IMessageBroker>()); } }
 
+
 		protected abstract void UpdateConfigForCacheProcessors();
 
-		protected abstract void BuildRequestHandlers();
+		public abstract void BuildRequestHandlers();
 
 		public CacheRequestProcessorBase(IDataContext provider) : base(provider)
 		{
@@ -36,7 +35,7 @@ namespace SVIBEL.Core.Persistance
 			_cahceProcessors.ForEach(x => x.Stop());
 		}
 
-		protected override void OnConfigChanged()
+		public override void OnConfigChanged()
 		{
 			UpdateConfigForCacheProcessors();
 		}

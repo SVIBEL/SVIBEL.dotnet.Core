@@ -5,16 +5,16 @@ using SVIBEL.Core.Common.Service;
 
 namespace SVIBEL.Core.Persistance
 {
-	public abstract class PersistanceRequestProcessorBase : DataProviderBackedProcessor
+	public abstract class PersistanceRequestProcessorBase : DataProviderBackedProcessor, IPersistanceRequestProcessor
 	{
 		private IMessageBroker _messenger;
-		private List<DataProviderBackedProcessor> _messageProcessors;
+		protected List<DataProviderBackedProcessor> _messageProcessors;
 
 		public IMessageBroker Messenger { get { return _messenger ?? (_messenger = ServiceLocator.Locator.Locate<IMessageBroker>()); } }
 
 		protected abstract void UpdateConfigForCacheProcessors();
 
-		protected abstract void BuildPersistors();
+		public abstract void BuildPersistors();
 
 		public PersistanceRequestProcessorBase(IDataContext provider) : base(provider)
 		{
@@ -31,11 +31,6 @@ namespace SVIBEL.Core.Persistance
 		public override void Stop()
 		{
 			_messageProcessors.ForEach(x => x.Stop());
-		}
-
-		protected override void OnConfigChanged()
-		{
-			UpdateConfigForCacheProcessors();
 		}
 	}
 }

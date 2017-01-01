@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace SVIBEL.Core.Models
 {
 	public class ServerConfig : IConfig
@@ -13,12 +14,9 @@ namespace SVIBEL.Core.Models
 			get; set;
 		}
 
-		public string DBLocation
-		{
-			get; set;
-		}
-
 		public DBConfig Database { get; set; }
+
+		public MessagingConfig Messaging { get; set; }
 
 	}
 	public class DBConfig : IConfig
@@ -41,5 +39,7 @@ namespace SVIBEL.Core.Models
 		{
 			get; set;
 		}
+
+		public string DBIP { get; set;}
 	}
 }
