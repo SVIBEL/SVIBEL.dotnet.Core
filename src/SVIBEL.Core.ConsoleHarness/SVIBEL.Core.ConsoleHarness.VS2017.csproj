@@ -8,7 +8,10 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Auth0" Version="3.6.0" />
+    <PackageReference Include="EasyNetQ" Version="2.0.4-netcore1432" />
     <PackageReference Include="Microsoft.NETCore.App" Version="1.0.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SVIBEL.Core.AuthenticationClient\SVIBEL.Core.AuthenticationClient.csproj" />
@@ -16,5 +19,6 @@
     <ProjectReference Include="..\SVIBEL.Core.Config\SVIBEL.Core.Config.csproj" />
     <ProjectReference Include="..\SVIBEL.Core.Messaging\SVIBEL.Core.Messaging.csproj" />
     <ProjectReference Include="..\SVIBEL.Core.Models\SVIBEL.Core.Models.csproj" />
+    <ProjectReference Include="..\SVIBEL.Core.Persistance\SVIBEL.Core.Persistance.csproj" />
   </ItemGroup>
 </Project>
